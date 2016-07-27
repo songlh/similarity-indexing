@@ -1,8 +1,8 @@
-
+import ast
 import random
 from fpLoader import *
 
-def coeffsFromFile(sFileName):
+def parseCoeffsFromFile(sFileName):
 	fcoeffs = open(sFileName, 'r')
 	sFirstLine = fcoeffs.readline()
 	sSecondLine = fcoeffs.readline()	
@@ -12,6 +12,26 @@ def coeffsFromFile(sFileName):
 	coeffsB = [int(strNum) for strNum in sSecondLine.split()]
 
 	return coeffsA, coeffsB
+
+def loadCoeffsFromFile(sFileName):
+	fcoeffs = open(sFileName, 'r')
+	sFirstLine = fcoeffs.readline()
+	sSecondLine = fcoeffs.readline()
+
+	coeffsA = ast.literal_eval(sFirstLine)
+	coeffsB = ast.literal_eval(sSecondLine)
+
+	fcoeffs.close()
+
+	return coeffsA, coeffsB
+
+def dumpCoeffsToFile(coeffsA, coeffsB, sFileName):
+	fcoeffs = open(sFileName, 'w')
+	fcoeffs.write(str(coeffsA))
+	fcoeffs.write('\n')
+	fcoeffs.write(str(coeffsB))
+	fcoeffs.write('\n')
+	fcoeffs.close()
 
 
 
@@ -42,7 +62,7 @@ def generateCoeffs(numHash):
 	return coeffsA, coeffsB
 
 
-def minHash_0(sparseFP, coeffsA, coeffsB, totalFPs = FEATURE_SIZE):
+def compMinHash0(sparseFP, coeffsA, coeffsB, totalFPs = FEATURE_SIZE):
 	signatures = [totalFPs] * len(coeffsA)
 	numIndex = 0
 
@@ -60,7 +80,7 @@ def minHash_0(sparseFP, coeffsA, coeffsB, totalFPs = FEATURE_SIZE):
 
 	return signatures
 
-def minHash_1(sparseFP, coeffsA, coeffsB, totalFPs = FEATURE_SIZE):
+def compMinHash1(sparseFP, coeffsA, coeffsB, totalFPs = FEATURE_SIZE):
 
 	numIndex = 0
 	signatures = []
@@ -92,19 +112,28 @@ def cmpMinHashPair(minHash1, minHash2):
 
 	return numEqual * 1.0 / len(minHash1)
 
+def testCompMinHash():
+	coeffsA = [1, 3]
+        coeffsB = [1, 1]
+
+        S1 = [0, 3]
+        S2 = [2]
+        S3 = [1, 3, 4]
+        S4 = [0, 2, 3]
+
+        print compMinHash1(S1, coeffsA, coeffsB, 5)
+        print compMinHash1(S2, coeffsA, coeffsB, 5)
+        print compMinHash1(S3, coeffsA, coeffsB, 5)
+        print compMinHash1(S4, coeffsA, coeffsB, 5)
+
+
+
 
 if __name__ == '__main__':
-	coeffsA = [1, 3]
-	coeffsB = [1, 1]
+	numCoeffs = int(sys.argv[1])
+	strSave = sys.argv[2]
 
-	S1 = [0, 3]
-	S2 = [2]
-	S3 = [1, 3, 4]
-	S4 = [0, 2, 3]
-
-	print minHash_1(S1, coeffsA, coeffsB, 5)
-	print minHash_1(S2, coeffsA, coeffsB, 5)
-	print minHash_1(S3, coeffsA, coeffsB, 5)
-	print minHash_1(S4, coeffsA, coeffsB, 5)
+	coeffsA, coeffsB = generateCoeffs(numCoeffs)
+	dumpCoeffsToFile(coeffsA, coeffsB, strSave)
 
 
