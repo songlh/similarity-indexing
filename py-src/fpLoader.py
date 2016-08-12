@@ -88,3 +88,16 @@ def sparseListFromDirectory(sDirectory):
 
 	return listFPs, fpFiles
 
+def removeErrorFPs(sDirectory):
+	onlyfiles = [join(sDirectory, f) for f in listdir(sDirectory) if isfile(join(sDirectory, f)) and f.endswith('.bb')]
+
+	for sFileName in onlyfiles:
+		listTmp = listFromFile(sFileName)
+
+		if len(listTmp) == 0:
+			os.remove(sFileName)
+
+	
+if __name__ == '__main__':
+	removeErrorFPs(sys.argv[1])
+
